@@ -1,24 +1,20 @@
-from typing import Any
+from typing import Any, Dict, List
 
 
 def filter_by_state(
-    list_of_dict: list[dict[Any, Any]], state: str = "EXECUTED"
-) -> list[dict[Any, Any]]:
-    """Возвращает новый список словарей.
-
-    Содержит только те словари, у которых ключ state соответствует указанному значению.
-    """
-    return [item for item in list_of_dict if item.get("state") == state]
+    data: List[Dict[str, Any]], state: str = "EXECUTED"
+) -> List[Dict[str, Any]]:
+    """Фильтрует список словарей по значению ключа 'state'."""
+    filtered_data = [item for item in data if item.get("state") == state]
+    return filtered_data
 
 
 def sort_by_date(
-    list_of_dict: list[dict[Any, Any]], date_reverse: bool = True
-) -> list[dict[Any, Any]]:
-    """Возвращает список, отсортированный по параметру date.
+    data: List[Dict[str, Any]], reverse: bool = True
+) -> List[Dict[str, Any]]:
+    """Сортирует список словарей по ключу 'date'.
 
-    Принимает необязательный параметр date_reverse (по умолчанию True — убывание).
+    По умолчанию сортировка идет от самых свежих к самым старым (по убыванию).
     """
-    return sorted(
-        list_of_dict, key=lambda item: item.get("date", ""), reverse=date_reverse
-    )
-
+    sorted_data = sorted(data, key=lambda item: item.get("date", ""), reverse=reverse)
+    return sorted_data
