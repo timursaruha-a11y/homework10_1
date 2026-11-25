@@ -6,8 +6,8 @@ from src.masks import get_mask_account, get_mask_card_number
 @pytest.mark.parametrize(
     "card_number, expected_mask",
     [
-        ("7000792289606361", " 7000 79** **** 6361"),  # Добавили пробел в начало
-        ("1111222233334444", " 1111 22** **** 4444"),  # Добавили пробел в начало
+        ("7000792289606361", "7000 79** **** 6361"),
+        ("1111222233334444", "1111 22** **** 4444"),
     ],
 )
 def test_get_mask_card_number(card_number, expected_mask):
