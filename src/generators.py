@@ -4,11 +4,18 @@ from typing import Any, Dict, Iterator, List
 def filter_by_currency(
     transactions: List[Dict[str, Any]], currency: str
 ) -> Iterator[Dict[str, Any]]:
-    """Фильтрует транзакции по заданной валюте и возвращает итератор."""
+    """Фильтрует транзакции по заданной валюте (поддерживает JSON, CSV и XLSX)."""
     for transaction in transactions:
-        operation_amount = transaction.get("operationAmount", {})
-        currency_info = operation_amount.get("currency", {})
-        if currency_info.get("code") == currency:
+        # Вариант 1: структура из JSON
+        if "operationAmount" in transaction and isinstance(
+            transaction["operationAmount"], dict
+        ):
+            code = transaction["operationAmount"].get("currency", {}).get("code")
+        # Вариант 2: структура из CSV / XLSX
+        else:
+            code = transaction.get("currency_code")
+
+        if code == currency:
             yield transaction
 
 

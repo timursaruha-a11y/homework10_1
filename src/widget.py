@@ -3,12 +3,16 @@ from src.masks import get_mask_card_number as card
 
 
 def mask_account_card(data_of_card: str) -> str:
-    """Принимает номер карты или номер чсета и возвражает его под маской"""
-    if data_of_card.split()[0].lower() == "счет":
-        return data_of_card.split()[0] + account(data_of_card.split()[1])
-    else:
-        return data_of_card.split()[0] + card(data_of_card.split()[1])
-
+    """Принимает номер карты или номер счета и возвращает его под маской."""
+    if not data_of_card:
+        return ""
+    parts = data_of_card.rsplit(" ", 1)
+    if len(parts) != 2:
+        return data_of_card
+    name, number = parts
+    if name.lower() == "счет":
+        return f"{name} {account(number)}"
+    return f"{name} {card(number)}"
 
 def get_date(string_whith_data: str) -> str:
     """Изменяет формат даты"""
