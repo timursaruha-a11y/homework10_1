@@ -10,11 +10,20 @@ BASE_URL = "https://apilayer.com"
 
 
 def convert_to_rub(transaction: dict) -> float:
-    operation_amount = transaction.get("operationAmount", {})
-    amount = float(operation_amount.get("amount", 0.0))
-    currency = operation_amount.get("currency", {}).get("code", "RUB")
+    if "operationAmount" in transaction and isinstance(
+        transaction["operationAmount"], dict
+    ):
+        operation_amount = transaction["operationAmount"]
+        amount = float(operation_amount.get("amount", 0.0))
+        currency = operation_amount.get("currency", {}).get("code", "RUB")
+    else:
+        raw_amount = transaction.get("amount", 0.0)
+        amount = float(raw_amount) if raw_amount != "" else 0.0
+        currency = transaction.get("currency_code", "RUB")
+
     if currency == "RUB":
         return amount
+
     if currency in ["USD", "EUR"]:
         if not API_KEY:
             raise ValueError("API_KEY не найден в переменных окружения.")

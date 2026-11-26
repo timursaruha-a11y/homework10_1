@@ -61,9 +61,12 @@ def read_transactions_csv(file_path: str | Path) -> list[dict]:
         return []
 
     try:
-        # Использование sep=None и engine='python' позволяет pandas автоматически определить разделитель (, или ;)
-        df = pd.read_csv(path, sep=None, engine="python")
-        # Метод fillna('') заменяет пустые ячейки (NaN) на пустые строки, чтобы избежать проблем при фильтрации
+        df = pd.read_csv(path, sep=";")
+        # Удаляем полностью пустые строки (например, ';;;;;;;;')
+        df = df.dropna(how="all")
+        # Приводим id к целому числу, если столбец существует
+        if "id" in df.columns:
+            df["id"] = df["id"].astype(int)
         df = df.fillna("")
 
         data = df.to_dict(orient="records")
@@ -73,6 +76,31 @@ def read_transactions_csv(file_path: str | Path) -> list[dict]:
         logger.error(f"Ошибка при чтении CSV файла {path}: {e}")
         return []
 
+
+def read_transactions_excel(file_path: str | Path) -> list[dict]:
+    """Считывает финансовые операции из Excel-файла (.xlsx) и возвращает список словарей."""
+    path = Path(file_path)
+    logger.info(f"Попытка чтения транзакций из Excel файла по пути: {path}")
+
+    if not path.exists():
+        logger.error(f"Файл не найден по пути: {path}")
+        return []
+
+    try:
+        df = pd.read_excel(path)
+        df = df.dropna(how="all")
+        if "id" in df.columns:
+            df["id"] = df["id"].astype(int)
+        df = df.fillna("")
+
+        data = df.to_dict(orient="records")
+        logger.info(
+            f"Данные из Excel успешно прочитаны. Найдено транзакций: {len(data)}"
+        )
+        return data
+    except Exception as e:
+        logger.error(f"Ошибка при чтении Excel файла {path}: {e}")
+        return []
 
 def read_transactions_excel(file_path: str | Path) -> list[dict]:
     """Считывает финансовые операции из Excel-файла (.xlsx) и возвращает список словарей."""
